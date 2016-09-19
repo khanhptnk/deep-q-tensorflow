@@ -65,16 +65,16 @@ class Experience(object):
     for _, (name, array) in enumerate(
         zip(["state_mem", "action_mem", "reward_mem", "is_terminal_mem"],
             [self.state_mem, self.action_mem, self.reward_mem, self.is_terminal_mem])):
-      np.save(name, array)
-    with open("experience_variables.save", "wb") as w:
+      np.save(os.path.join("save", name), array)
+    with open("save/experience_variables.save", "wb") as w:
       cPickle.dump([self.count, self.mem_index], w, protocol=cPickle.HIGHEST_PROTOCOL)
 
   def load(self):
     for _, (name, array) in enumerate(
         zip(["state_mem", "action_mem", "reward_mem", "is_terminal_mem"],
             [self.state_mem, self.action_mem, self.reward_mem, self.is_terminal_mem])):
-      array = np.load(name + ".npy")
-    with open("experience_variables.save", "rb") as f:
+      array = np.load(os.path.join("save", name + ".npy"))
+    with open("save/experience_variables.save", "rb") as f:
       self.count, self.mem_index = cPickle.load(f)
 
 

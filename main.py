@@ -19,7 +19,7 @@ def main(_):
   with graph.as_default():
     env = gym.make("CartPole-v0")
     problem_config = config.CartPoleConfig()
-    model = LinearModel(config=problem_config)
+    model = MLPModel(config=problem_config)
     agent = Agent(model=model)
 
     logdir = "/tmp/cart_pole"
@@ -28,8 +28,8 @@ def main(_):
 
     game = Game(env=env, agent=agent, logdir=logdir, should_render=True,
         should_load=FLAGS.load)
-    game.train(10000)
-    #game.play(50)
+    #game.train(10000)
+    game.play(50)
 
 
 if __name__ == "__main__":

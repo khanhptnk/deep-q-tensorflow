@@ -26,13 +26,13 @@ class Game(object):
       self.current_episode = 0
 
   def save(self):
-    with open("variables.save", "wb") as w:
+    with open("save/variables.save", "wb") as w:
       save_list = [self.step, self.epsilon, self.total_train_reward, self.current_episode]
       cPickle.dump(save_list, w, protocol=cPickle.HIGHEST_PROTOCOL)
     self.experience.save()
 
   def load(self):
-    with open("variables.save", "rb") as f:
+    with open("save/variables.save", "rb") as f:
       self.step, self.epsilon, self.total_train_reward, self.current_episode = cPickle.load(f)
     self.experience.load()
 

@@ -20,7 +20,7 @@ class Model(object):
     raise NotImplementedError
 
 
-class LinearModel(Model):
+class MLPModel(Model):
   def __init__(self, config):
     self.config = config
     self.scopes = ["training_fc_0",
