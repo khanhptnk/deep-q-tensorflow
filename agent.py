@@ -6,9 +6,9 @@ import collections
 import random
 
 class Agent(object):
-  def __init__(self, model=None, config=None):
+  def __init__(self, model=None):
     self.model = model
-    self.config = config
+    self.config = self.model.config
     self.compute_target_network_op = self.createComputeTargetNetWorkOp()
     self.loss, self.train_op = self.createQLearningOps()
     self.best_action_op = self.createBestActionOp()
@@ -60,7 +60,6 @@ class Agent(object):
     self.r = tf.placeholder(tf.float32, shape=[self.config.BATCH_SIZE])
     self.is_terminal = tf.placeholder(tf.float32, shape=[self.config.BATCH_SIZE])
     delta = self.r + (1. - self.is_terminal) * self.config.GAMMA * self.q_s_prime_a_prime - q_s_a
-    #entropies = tf.reduce_sum(tf.mul(tf.nn.softmax(q_s_a), tf.nn.log_softmax(q_s_a)), reduction_indices=1)
     loss = 0.5 * tf.reduce_mean(tf.square(delta))
 
     # Optimizer
@@ -76,8 +75,6 @@ class Agent(object):
     dist, best_action = sess.run([self.q_s_for_best_action, self.best_action_op],
         feed_dict={ self.s_for_best_action : state,
                     self.random_action : random_action})
-    print state
-    print dist
     return best_action
 
   def observe(self, sess, state, action, next_state, reward, is_terminal):

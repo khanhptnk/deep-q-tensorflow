@@ -1,4 +1,6 @@
+import cPickle
 import numpy as np
+import os
 import random
 
 class Experience(object):
@@ -58,4 +60,21 @@ class Experience(object):
 
     return (self.batch_states, batch_actions, self.batch_next_states,
         batch_rewards, batch_is_terminal)
+
+  def save(self):
+    for _, (name, array) in enumerate(
+        zip(["state_mem", "action_mem", "reward_mem", "is_terminal_mem"],
+            [self.state_mem, self.action_mem, self.reward_mem, self.is_terminal_mem])):
+      np.save(name, array)
+    with open("experience_variables.save", "wb") as w:
+      cPickle.dump([self.count, self.mem_index], w, protocol=cPickle.HIGHEST_PROTOCOL)
+
+  def load(self):
+    for _, (name, array) in enumerate(
+        zip(["state_mem", "action_mem", "reward_mem", "is_terminal_mem"],
+            [self.state_mem, self.action_mem, self.reward_mem, self.is_terminal_mem])):
+      array = np.load(name + ".npy")
+    with open("experience_variables.save", "rb") as f:
+      self.count, self.mem_index = cPickle.load(f)
+
 

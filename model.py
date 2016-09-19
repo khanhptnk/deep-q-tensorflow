@@ -55,10 +55,10 @@ class LinearModel(Model):
   def compute_target(self, inputs):
     inputs = tf.reshape(inputs,
         shape=[-1, self.config.INPUT_DIM * self.config.HISTORY_LENGTH])
-    outputs = slim.fully_connected(inputs, 100, scope="target_fc_0")
-    outputs = slim.fully_connected(outputs, 200, scope="target_fc_1")
-    outputs = slim.fully_connected(outputs, 200, scope="target_fc_2")
-    outputs = slim.fully_connected(outputs, 100, scope="target_fc_3")
+    outputs = slim.fully_connected(inputs, 10000, scope="target_fc_0")
+    #outputs = slim.fully_connected(outputs, 200, scope="target_fc_1")
+    #outputs = slim.fully_connected(outputs, 200, scope="target_fc_2")
+    #outputs = slim.fully_connected(outputs, 100, scope="target_fc_3")
     outputs = slim.fully_connected(
         outputs, self.config.NUM_ACTIONS, activation_fn=None, scope="target_fc_4")
     return outputs
@@ -66,10 +66,10 @@ class LinearModel(Model):
   def compute_training(self, inputs):
     inputs = tf.reshape(inputs,
         shape=[-1, self.config.INPUT_DIM * self.config.HISTORY_LENGTH])
-    outputs = slim.fully_connected(inputs, 100, scope=self.scopes[0])
-    outputs = slim.fully_connected(outputs, 200, scope=self.scopes[1])
-    outputs = slim.fully_connected(outputs, 200, scope=self.scopes[2])
-    outputs = slim.fully_connected(outputs, 100, scope=self.scopes[3])
+    outputs = slim.fully_connected(inputs, 10000, scope=self.scopes[0])
+    #outputs = slim.fully_connected(outputs, 200, scope=self.scopes[1])
+    #outputs = slim.fully_connected(outputs, 200, scope=self.scopes[2])
+    #outputs = slim.fully_connected(outputs, 100, scope=self.scopes[3])
     outputs = slim.fully_connected(
         outputs, self.config.NUM_ACTIONS, activation_fn=None, scope=self.scopes[4])
     return outputs
