@@ -6,7 +6,7 @@ class CartPoleConfig(object):
 
     self.NUM_STEPS = 10000
 
-    self.HISTORY_LENGTH = 5
+    self.HISTORY_LENGTH = 1
 
     self.BATCH_SIZE = 10
 

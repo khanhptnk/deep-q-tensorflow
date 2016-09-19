@@ -22,18 +22,18 @@ class Game(object):
     else:
       self.step = 0
       self.epsilon = 0.5
-      self.total_train_reward = 0.
+      self.train_rewards = [0] * 100
       self.current_episode = 0
 
   def save(self):
     with open("save/variables.save", "wb") as w:
-      save_list = [self.step, self.epsilon, self.total_train_reward, self.current_episode]
+      save_list = [self.step, self.epsilon, self.train_rewards, self.current_episode]
       cPickle.dump(save_list, w, protocol=cPickle.HIGHEST_PROTOCOL)
     self.experience.save()
 
   def load(self):
     with open("save/variables.save", "rb") as f:
-      self.step, self.epsilon, self.total_train_reward, self.current_episode = cPickle.load(f)
+      self.step, self.epsilon, self.train_rewards, self.current_episode = cPickle.load(f)
     self.experience.load()
 
   def runEpisode(self, sess, is_training=True):
@@ -87,21 +87,22 @@ class Game(object):
 
     # Message at the end of the episode.
     num_steps = self.step - old_step + 1
-    print "Episode", self.current_episode, "has finshed in", num_steps, "steps"
-    avg_loss = total_loss / num_steps
-    print  "    Reward: {:10}     Loss: {:.6f}".format(total_reward, avg_loss)
 
-    return total_reward
+    return num_steps, total_reward, total_loss
 
   def train(self, num_episodes):
     sv = tf.train.Supervisor(logdir=self.logdir, save_model_secs=50)
     with sv.managed_session('') as sess:
       for i in xrange(num_episodes):
-        self.total_train_reward += self.runEpisode(sess)
+        ep_num_steps, ep_reward, ep_loss = self.runEpisode(sess)
+        self.train_rewards[self.current_episode % 100] = ep_reward
         if self.current_episode % 20 == 0:
           self.save()
         self.current_episode += 1
-        print "Running average reward:", self.total_train_reward / self.current_episode
+        print "Episode", self.current_episode, "has finshed in", ep_num_steps, "steps"
+        print  "    Reward: {:10}     Loss: {:.6f}".format(ep_reward, ep_loss)
+        print "Running average reward for the last 100 episodes:", \
+              sum(self.train_rewards) / min(100, self.current_episode)
       sv.saver.save(sess, self.logdir, global_step=sv.global_step)
       self.save()
 
@@ -110,5 +111,8 @@ class Game(object):
     with sv.managed_session('') as sess:
       total_reward = 0.
       for i in xrange(num_episodes):
-        total_reward += self.runEpisode(sess, is_training=False)
-        print "Running average reward: " + str(total_reward / (i + 1))
+        ep_num_steps, ep_reward, num_steps = self.runEpisode(sess, is_training=False)
+        total_reward += ep_reward
+        print "Episode", self.current_episode, "has finshed in", num_steps, "steps"
+        print  "    Reward: {:10}".format(ep_reward)
+        print "Running average reward:", total_reward / (i + 1)

@@ -28,7 +28,7 @@ class MLPModel(Model):
                    "training_fc_2",
                    "training_fc_3",
                    "training_fc_4"]
-    super(LinearModel, self).__init__()
+    super(MLPModel, self).__init__()
 
   def arg_scope(self, reuse=None, is_training=None):
     batch_norm_params = {

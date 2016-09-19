@@ -7,7 +7,7 @@ import os
 
 from agent import Agent
 from game import Game
-from model import LinearModel
+from model import MLPModel
 
 FLAGS = tf.flags.FLAGS
 
@@ -28,7 +28,7 @@ def main(_):
 
     game = Game(env=env, agent=agent, logdir=logdir, should_render=True,
         should_load=FLAGS.load)
-    #game.train(10000)
+    game.train(1000)
     game.play(50)
 
 
