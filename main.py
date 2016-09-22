@@ -11,15 +11,14 @@ from model import MLPModel
 
 FLAGS = tf.flags.FLAGS
 
-tf.flags.DEFINE_boolean("load", False, "Whether to load a previous session.")
+tf.flags.DEFINE_boolean("load", True, "Whether to load a previous session.")
 
 def main(_):
   tf.logging.set_verbosity(tf.logging.INFO)
   graph = tf.Graph()
   with graph.as_default():
     env = gym.make("CartPole-v0")
-    problem_config = config.CartPoleConfig()
-    model = MLPModel(config=problem_config)
+    model = MLPModel(config=config.CartPoleConfig())
     agent = Agent(model=model)
 
     logdir = "/tmp/cart_pole"
@@ -29,7 +28,7 @@ def main(_):
     game = Game(env=env, agent=agent, logdir=logdir, should_render=True,
         should_load=FLAGS.load)
     game.train(1000)
-    game.play(50)
+    #game.play(50)
 
 
 if __name__ == "__main__":
