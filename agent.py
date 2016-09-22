@@ -14,6 +14,7 @@ class Agent(object):
                                                self.config.INPUT_DIM,
                                                self.config.HISTORY_LENGTH])
     self.a = tf.placeholder(tf.int32, shape=[None,])
+    self.best_a = tf.placeholder(tf.int32, shape=[None,])
     self.r = tf.placeholder(tf.float32, shape=[None,])
     self.is_terminal = tf.placeholder(tf.float32, shape=[None,])
 
@@ -55,9 +56,8 @@ class Agent(object):
   def computeTargetNetwork(self):
     with tf.variable_scope("target_network"):
       with slim.arg_scope(self.model.arg_scope(reuse=False)):
-        q_s_prime = self.model.compute(self.s)
-        a_prime = tf.argmax(q_s_prime, dimension=1)
-        return self.computeQValue(q_s_prime, a_prime)
+        q_s = self.model.compute(self.s)
+        return self.computeQValue(q_s, self.best_a)
 
 
   def computeTrainingNetwork(self):
@@ -79,8 +79,13 @@ class Agent(object):
     return random_action if random.random() < epsilon else best_action
 
   def observe(self, sess, states, actions, next_states, rewards, is_terminals):
+    # Double Q-learning. Compute argmax_a' Q(s', a') using training network.
+    best_a_prime = sess.run(self.best_action_op,
+        feed_dict={ self.s : next_states })
+    # Evaluate Q(s', argmax_a') using target network.
     q_s_prime_a_prime = sess.run(self.compute_target_network_op,
-        feed_dict = {self.s : next_states})
+        feed_dict = { self.s : next_states,
+                      self.best_a : best_a_prime})
 
     loss, _ = sess.run([self.loss_op, self.train_op],
             feed_dict={ self.s : states,

@@ -28,7 +28,7 @@ def main(_):
     game = Game(env=env, agent=agent, logdir=logdir, should_render=True,
         should_load=FLAGS.load)
     game.train(1000)
-    #game.play(50)
+    game.play(50)
 
 
 if __name__ == "__main__":
